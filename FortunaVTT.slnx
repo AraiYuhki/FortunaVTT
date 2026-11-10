@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Fortuna.Domain/Fortuna.Domain.csproj" />
+    <Project Path="src/Fortuna.Server/Fortuna.Server.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Fortuna.Tests/Fortuna.Tests.csproj" />
+  </Folder>
+</Solution>
