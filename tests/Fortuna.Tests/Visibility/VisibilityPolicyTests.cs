@@ -87,6 +87,21 @@ public class VisibilityPolicyTests
     }
 
     [Fact]
+    public void Server_admin_can_see_everything_even_without_being_a_member()
+    {
+        var left = _members.With(new RoomMember(_alice, RoomRole.Member, IsActive: false));
+
+        Assert.True(VisibilityPolicy.CanView(Obj(Audience.Private), _outsider, _members, isServerAdmin: true));
+        Assert.True(VisibilityPolicy.CanView(Obj(Audience.Only(_bob)), _alice, left, isServerAdmin: true));
+    }
+
+    [Fact]
+    public void Server_admin_privilege_is_off_by_default()
+    {
+        Assert.False(VisibilityPolicy.CanView(Obj(Audience.Private), _outsider, _members));
+    }
+
+    [Fact]
     public void Members_audience_equality_is_set_based()
     {
         Assert.Equal(Audience.Only(_alice, _bob), Audience.Only(_bob, _alice));

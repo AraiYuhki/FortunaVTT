@@ -32,11 +32,11 @@ public sealed class ViewState(UserId viewer)
     public bool IsVisible(ObjectId id) => _seen.ContainsKey(id);
 
     /// <summary>オブジェクトの最新状態を反映し、送るべき変化があれば返す。</summary>
-    public ViewEvent? Observe(RoomObject obj, RoomMembers members)
+    public ViewEvent? Observe(RoomObject obj, RoomMembers members, bool isServerAdmin = false)
     {
         var known = _seen.TryGetValue(obj.Id, out var knownVersion);
 
-        if (VisibilityPolicy.CanView(obj, Viewer, members))
+        if (VisibilityPolicy.CanView(obj, Viewer, members, isServerAdmin))
         {
             if (!known)
             {
@@ -72,7 +72,8 @@ public sealed class ViewState(UserId viewer)
     /// ルーム全体の現在状態と突き合わせて、差分をまとめて返す。
     /// 再接続時やメンバー変更時に使う。<paramref name="all"/> に無い既知のオブジェクトは削除扱いにする。
     /// </summary>
-    public IReadOnlyList<ViewEvent> Reconcile(IEnumerable<RoomObject> all, RoomMembers members)
+    public IReadOnlyList<ViewEvent> Reconcile(
+        IEnumerable<RoomObject> all, RoomMembers members, bool isServerAdmin = false)
     {
         var events = new List<ViewEvent>();
         var present = new HashSet<ObjectId>();
@@ -80,7 +81,7 @@ public sealed class ViewState(UserId viewer)
         foreach (var obj in all)
         {
             present.Add(obj.Id);
-            if (Observe(obj, members) is { } e)
+            if (Observe(obj, members, isServerAdmin) is { } e)
             {
                 events.Add(e);
             }

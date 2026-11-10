@@ -30,6 +30,10 @@ public sealed class RoomMembers
 
     public RoomMembers With(RoomMember member) => new(_members.SetItem(member.Id, member));
 
+    public RoomMembers Without(UserId id) => new(_members.Remove(id));
+
+    public IEnumerable<RoomMember> All => _members.Values;
+
     public bool TryGet(UserId id, out RoomMember member) => _members.TryGetValue(id, out member!);
 
     /// <summary>ルームに参加中（退室していない）か。</summary>

@@ -8,8 +8,18 @@ namespace Fortuna.Domain.Visibility;
 /// </summary>
 public static class VisibilityPolicy
 {
-    public static bool CanView(RoomObject obj, UserId viewer, RoomMembers members)
+    /// <param name="isServerAdmin">
+    /// 閲覧者がサーバー管理者か（ADR-003 §3）。唯一の閲覧特権で、既定は false（最小権限）。
+    /// 閲覧のみで、編集権限は与えない。
+    /// </param>
+    public static bool CanView(RoomObject obj, UserId viewer, RoomMembers members, bool isServerAdmin = false)
     {
+        // サーバー管理者のみ、参加状況・公開先に関わらずすべて見える。
+        if (isServerAdmin)
+        {
+            return true;
+        }
+
         // 退室済み・未参加は何も見えない（自分の所有物も含む）。
         if (!members.IsActive(viewer))
         {
@@ -22,7 +32,7 @@ public static class VisibilityPolicy
             return true;
         }
 
-        // Owner ロールや GM に特権はない。公開先に含まれる場合のみ見える。
+        // ルームの Owner ロールや GM に特権はない。公開先に含まれる場合のみ見える。
         return obj.Audience switch
         {
             Audience.Room => true,
