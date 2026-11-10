@@ -4,6 +4,7 @@
     <Project Path="src/Fortuna.Server/Fortuna.Server.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Fortuna.Server.Tests/Fortuna.Server.Tests.csproj" />
     <Project Path="tests/Fortuna.Tests/Fortuna.Tests.csproj" />
   </Folder>
 </Solution>

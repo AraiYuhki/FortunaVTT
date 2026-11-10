@@ -127,6 +127,12 @@ public sealed class Room
     /// <summary>追放。対象の所有物はすべて削除される（ADR-003 §6）。</summary>
     public CommandResult Kick(UserId actor, UserId target)
     {
+        // 非参加者には権限の有無ではなく「参加していない」を返す（部屋の存在を漏らさないため、上位で NotFound 扱いにできる）。
+        if (!_members.IsActive(actor))
+        {
+            return CommandResult.Fail(RoomError.NotAMember);
+        }
+
         if (!IsActiveOwner(actor) || actor == target)
         {
             return CommandResult.Fail(RoomError.Forbidden);
@@ -153,6 +159,11 @@ public sealed class Room
 
     public CommandResult TransferOwnership(UserId actor, UserId newOwner)
     {
+        if (!_members.IsActive(actor))
+        {
+            return CommandResult.Fail(RoomError.NotAMember);
+        }
+
         if (!IsActiveOwner(actor))
         {
             return CommandResult.Fail(RoomError.Forbidden);

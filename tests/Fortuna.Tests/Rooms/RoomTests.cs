@@ -338,6 +338,15 @@ public class RoomTests
     }
 
     [Fact]
+    public void Non_members_get_NotAMember_not_Forbidden_for_management_commands()
+    {
+        var stranger = UserId.New();
+
+        Assert.Equal(RoomError.NotAMember, _room.Kick(stranger, _bob).Error);
+        Assert.Equal(RoomError.NotAMember, _room.TransferOwnership(stranger, _bob).Error);
+    }
+
+    [Fact]
     public void Owner_role_cannot_be_granted_through_Join()
     {
         Assert.Throws<ArgumentException>(() => _room.Join(UserId.New(), RoomRole.Owner));
